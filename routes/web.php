@@ -13,7 +13,8 @@ Route::get('/weather', function () {
     $weather = new WeatherDataService(
         new Client(),
         new OpenMeteoJsonParser(),
-        "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,weather_code,cloud_cover",
+        env('WEATHER_API_URL'),
+        env('WEATHER_API_PARAMS', [])
     );
 
     $weather->getWeatherData();

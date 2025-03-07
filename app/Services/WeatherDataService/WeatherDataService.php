@@ -21,7 +21,7 @@ readonly class WeatherDataService
 
     public function getWeatherData(): WeatherData
     {
-        // ??? Что делать в
+        // ??? Как тут обработать возможные ошибки
         try {
             $response = $this->client->get($this->url, $this->params);
             $jsonString = $response->getBody()->getContents();
