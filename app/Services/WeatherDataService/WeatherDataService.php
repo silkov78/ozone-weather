@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\WeatherDataService;
 
+use App\Services\WeatherDataService\Exceptions\RequestApiException;
+use App\Services\WeatherDataService\Interfaces\WeatherJsonParserInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -17,19 +19,20 @@ readonly class WeatherDataService
     ) {
     }
 
-    public function getWeatherData(): array
+    public function getWeatherData(): WeatherData
     {
+        // ??? Что делать в
         try {
             $response = $this->client->get($this->url, $this->params);
             $jsonString = $response->getBody()->getContents();
         } catch (GuzzleException $e) {
-            throw new \RuntimeException("Failed to fetch weather data: " . $e->getMessage());
+            throw new RequestApiException("Не удалось получить данные с API: " . $e->getMessage());
         }
 
         return $this->parseJsonString($jsonString);
     }
 
-    private function parseJsonString(string $jsonString): array
+    private function parseJsonString(string $jsonString): WeatherData
     {
         return $this->weatherJsonParser->parseData($jsonString);
     }
