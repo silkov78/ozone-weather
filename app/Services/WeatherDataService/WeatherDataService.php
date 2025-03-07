@@ -11,8 +11,9 @@ readonly class WeatherDataService
 {
     public function __construct(
         public Client $client,
+        public WeatherJsonParserInterface $weatherJsonParser,
         public string $url,
-        public array  $params = [],
+        public array $params = [],
     ) {
     }
 
@@ -30,10 +31,6 @@ readonly class WeatherDataService
 
     private function parseJsonString(string $jsonString): array
     {
-        $data = json_decode($jsonString, true);
-
-        var_dump($data['current']);
-
-        return $data['current'];
+        return $this->weatherJsonParser->parseData($jsonString);
     }
 }
