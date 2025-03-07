@@ -8,15 +8,23 @@ use GuzzleHttp\Client;
 
 class WeatherApiService
 {
-    public function __construct()
+    public function __construct(
+        string $url,
+        array $params = [],
+    )
     {
-        $client = new Client();
+        // WeatherApiService
+        try {
+            $client = new Client();
+            $response = $client->get($url, $params);
 
-        $url = 'https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m';
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
 
-        $response = $client->request('GET', $url);
+        // ResponseParser
+        $data = json_decode((string) $response->getBody(), true)['current'];
 
-        echo $response->getStatusCode();
-        echo $response->getBody();
+        var_dump($data);
     }
 }
