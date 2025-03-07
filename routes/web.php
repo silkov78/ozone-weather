@@ -7,6 +7,11 @@ Route::get('/', function () {
 });
 
 Route::get('/weather', function () {
-    return view('welcome');
+    $weather = new App\Services\WeatherDataService\WeatherDataService(
+        new \GuzzleHttp\Client(),
+        "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,weather_code,cloud_cover",
+    );
+
+    $weather->getWeatherData();
 });
 
