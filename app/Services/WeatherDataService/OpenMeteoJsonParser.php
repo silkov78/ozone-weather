@@ -21,8 +21,6 @@ class OpenMeteoJsonParser implements WeatherJsonParserInterface
             WeatherCode::fromCode($weatherArray['weather_code']),
         );
 
-        var_dump($weatherData);
-
         return $weatherData;
     }
 }
