@@ -6,6 +6,8 @@ use App\Services\WeatherDataService\OpenMeteoJsonParser;
 use App\Services\WeatherDataService\WeatherDataService;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use Mockery\Exception;
 
 class WeatherDataCommand extends Command
 {
@@ -28,12 +30,19 @@ class WeatherDataCommand extends Command
      */
     public function handle()
     {
-        $weatherData = new WeatherDataService(
-            new Client(),
-            new OpenMeteoJsonParser(),
-            env('WEATHER_API_URL'),
-        );
+        try {
+            $weatherData = (new WeatherDataService(
+                new Client(),
+                new OpenMeteoJsonParser(),
+                env('WEATHER_API_URL'),
+            ))->getWeatherData();
 
-       dump($weatherData->getWeatherData());
+            Log::info('Погода получена: ' . $weatherData->dateTime->format('Y-m-d H:i:s'));
+
+            dump($weatherData);
+        } catch (\Exception $e) {
+            Log::error('Ошибка при получении погоды: ' . $e->getMessage());
+        }
     }
+
 }
