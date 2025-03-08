@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\WeatherDataService;
 
 use App\Services\WeatherDataService\Enums\WeatherCode;
 use PHPUnit\Framework\TestCase;
