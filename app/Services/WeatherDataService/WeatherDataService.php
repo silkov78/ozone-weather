@@ -25,7 +25,7 @@ readonly class WeatherDataService
         try {
             $response = $this->client->get($this->url, $this->params);
             $jsonString = $response->getBody()->getContents();
-        } catch (GuzzleException $e) {
+        } catch (GuzzleException $e) {http://localhost/
             throw new RequestApiException("Не удалось получить данные с API: " . $e->getMessage());
         }
 
