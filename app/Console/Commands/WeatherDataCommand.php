@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\WeatherDataService\OpenMeteoJsonParser;
+use App\Services\WeatherDataService\WeatherApiClient;
 use App\Services\WeatherDataService\WeatherDataService;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -32,7 +33,7 @@ class WeatherDataCommand extends Command
     {
         try {
             $weatherData = (new WeatherDataService(
-                new Client(),
+                new WeatherApiClient(new Client()),
                 new OpenMeteoJsonParser(),
                 env('WEATHER_API_URL'),
             ))->getWeatherData();
