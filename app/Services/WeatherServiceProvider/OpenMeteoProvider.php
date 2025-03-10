@@ -5,16 +5,12 @@ namespace App\Services\WeatherServiceProvider;
 use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 use App\Services\WeatherServiceProvider\Exceptions\ApiRequestException;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Validation\Factory as ValidatorInterface;
 use Psr\Http\Message\ResponseInterface;
 
 readonly class OpenMeteoProvider implements WeatherProvider
 {
-    public function __construct(
-        private ClientInterface $client,
-        private ValidatorInterface $validator,
-    ) {}
-
     private const OPEN_METEO_URL = 'https://api.open-meteo.com/v1/forecast';
     private const OPEN_METEO_QUERY_PARAMS = [
         'latitude' => 53.8978,
@@ -22,19 +18,28 @@ readonly class OpenMeteoProvider implements WeatherProvider
         'current' => 'temperature_2m,weather_code,cloud_cover'
     ];
 
+    public function __construct(
+        private ClientInterface $client,
+        private ValidatorInterface $validator,
+    ) {}
+
     public function getCurrentWeather(): WeatherData
     {
-        $response = $this->client->get(
-            self::OPEN_METEO_URL,
-            self::OPEN_METEO_QUERY_PARAMS
-        );
+        $queryParameters = http_build_query(self::OPEN_METEO_QUERY_PARAMS);
+        $apiEndpoint = self::OPEN_METEO_URL . '?' . $queryParameters;
+
+        try {
+            $response = $this->client->get($apiEndpoint);
+        } catch (GuzzleException $e) {
+            throw new ApiRequestException($e->getMessage());
+        }
 
         return $this->validateResponse($response);
     }
 
     private function validateResponse(ResponseInterface $response): WeatherData
     {
-        if (! $response->successful()) {
+        if ($response->getStatusCode() !== 200) {
             throw new ApiRequestException(
                 'Данные с API не были получены. Статус ответа: ' . $response->getStatusCode()
             );
@@ -53,7 +58,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
             ],
         ];
 
-        $data = $response->json();
+        $data = json_decode($response->getBody()->getContents(), true);
 
         $validator = $this->validator->make($data, $rules);
         if ($validator->fails()) {
