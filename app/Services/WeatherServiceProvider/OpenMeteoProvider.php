@@ -4,12 +4,17 @@ namespace App\Services\WeatherServiceProvider;
 
 use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 use App\Services\WeatherServiceProvider\Exceptions\ApiRequestException;
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Validator;
+use GuzzleHttp\ClientInterface;
+use Illuminate\Contracts\Validation\Factory as ValidatorInterface;
+use Psr\Http\Message\ResponseInterface;
 
 readonly class OpenMeteoProvider implements WeatherProvider
 {
+    public function __construct(
+        private ClientInterface $client,
+        private ValidatorInterface $validator,
+    ) {}
+
     private const OPEN_METEO_URL = 'https://api.open-meteo.com/v1/forecast';
     private const OPEN_METEO_QUERY_PARAMS = [
         'latitude' => 53.8978,
@@ -19,7 +24,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
 
     public function getCurrentWeather(): WeatherData
     {
-        $response = HTTP::get(
+        $response = $this->client->get(
             self::OPEN_METEO_URL,
             self::OPEN_METEO_QUERY_PARAMS
         );
@@ -27,7 +32,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
         return $this->validateResponse($response);
     }
 
-    private function validateResponse(Response $response): WeatherData
+    private function validateResponse(ResponseInterface $response): WeatherData
     {
         if (! $response->successful()) {
             throw new ApiRequestException(
@@ -50,7 +55,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
 
         $data = $response->json();
 
-        $validator = Validator::make($data, $rules);
+        $validator = $this->validator->make($data, $rules);
         if ($validator->fails()) {
             throw new ApiRequestException(
                 'Невалидные данные: ' . $validator->errors()
