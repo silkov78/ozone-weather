@@ -9,6 +9,8 @@ namespace App\Services\WeatherServiceProvider\Enums;
  * Кодировки утверждены WMO (являются общепринятыми).
  * Если провалидированные данные содержат код, непредставленный в перечислении,
  * ему присваивается код UNDEFINED.
+ *
+ * Ссылка на источник: https://open-meteo.com/en/docs (перечислены в конце)
  */
 enum WeatherCode: int
 {
