@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Services\WeatherServiceProvider\OpenMeteoProvider;
 use App\Services\WeatherServiceProvider\WeatherProvider;
 use Illuminate\Console\Command;
 

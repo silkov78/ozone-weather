@@ -10,4 +10,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('app:fetch-weather')->everyTenSeconds();
+// Schedulers
+//Schedule::command('app:fetch-weather')->everyTenSeconds();
