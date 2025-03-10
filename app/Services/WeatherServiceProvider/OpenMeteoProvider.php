@@ -4,7 +4,9 @@ namespace App\Services\WeatherServiceProvider;
 
 use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 use App\Services\WeatherServiceProvider\Exceptions\ApiRequestException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 readonly class OpenMeteoProvider implements WeatherProvider
 {
@@ -17,36 +19,49 @@ readonly class OpenMeteoProvider implements WeatherProvider
 
     public function getCurrentWeather(): WeatherData
     {
-        $jsonString = $this->getJsonStringFromApi();
-        $dataArray = json_decode($jsonString,true)["current"];
+        $response = HTTP::get(
+            self::OPEN_METEO_URL,
+            self::OPEN_METEO_QUERY_PARAMS
+        );
+
+        return $this->validateAndParseResponse($response);
+    }
+
+    private function validateAndParseResponse(Response $response): WeatherData
+    {
+        if (! $response->successful()) {
+            throw new ApiRequestException(
+                'Данные с API не были получены. Статус ответа: ' . $response->getStatusCode()
+            );
+        }
+
+        $validWeatherCodes = array_column(WeatherCode::cases(), 'value');
+        $rules = [
+            'current.time' => 'required|date_format:Y-m-d\TH:i',
+            'current.interval' => 'required|integer',
+            'current.temperature_2m' => 'required|numeric',
+            'current.cloud_cover' => 'required|numeric:gte:0',
+            'current.weather_code' => [
+                'required',
+                'integer',
+                'in:' . implode(',', $validWeatherCodes),
+            ],
+        ];
+
+        $data = $response->json();
+
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            throw new ApiRequestException(
+                'Невалидные данные: ' . $validator->errors()
+            );
+        }
 
         return new WeatherData(
-            new \DateTime($dataArray['time']),
-            $dataArray['temperature_2m'],
-            $dataArray['cloud_cover'],
-            WeatherCode::fromCode($dataArray['weather_code']),
-        );
-
-    }
-
-    private function getJsonStringFromApi(): string
-    {
-        try {
-            $response = HTTP::get(
-                self::OPEN_METEO_URL,
-                self::OPEN_METEO_QUERY_PARAMS
-            );
-        } catch (\Exception $e) {
-            throw new ApiRequestException($e->getMessage());
-        }
-
-        if ($response->successful()) {
-            return $response->getBody()->getContents();
-        }
-
-        throw new ApiRequestException(
-            'Данные о погоде не были получены. Статус ответа: ' . $response->getStatusCode()
+            new \DateTime($data['current']['time']),
+            $data['current']['temperature_2m'],
+            $data['current']['cloud_cover'],
+            WeatherCode::fromCode($data['current']['weather_code']),
         );
     }
-
 }
