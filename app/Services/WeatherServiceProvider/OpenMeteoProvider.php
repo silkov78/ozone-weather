@@ -24,10 +24,10 @@ readonly class OpenMeteoProvider implements WeatherProvider
             self::OPEN_METEO_QUERY_PARAMS
         );
 
-        return $this->validateAndParseResponse($response);
+        return $this->validateResponse($response);
     }
 
-    private function validateAndParseResponse(Response $response): WeatherData
+    private function validateResponse(Response $response): WeatherData
     {
         if (! $response->successful()) {
             throw new ApiRequestException(
@@ -57,6 +57,11 @@ readonly class OpenMeteoProvider implements WeatherProvider
             );
         }
 
+        return $this->createWeatherDataObject($data);
+    }
+
+    private function createWeatherDataObject(array $data): WeatherData
+    {
         return new WeatherData(
             new \DateTime($data['current']['time']),
             $data['current']['temperature_2m'],
