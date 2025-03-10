@@ -6,14 +6,11 @@ use App\Services\WeatherServiceProvider\OpenMeteoProvider;
 use App\Services\WeatherServiceProvider\WeatherProvider;
 use Illuminate\Console\Command;
 
-class OpenMeteoCommand extends Command
+class GetWeather extends Command
 {
-    protected $signature = 'app:fetch-open-meteo';
-    protected $description = 'Get weather data from OpenMeteo';
+    protected $signature = 'app:get-weather';
+    protected $description = 'Get weather data from weather API';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(WeatherProvider $weatherProvider)
     {
         dump($weatherProvider->getCurrentWeather());
