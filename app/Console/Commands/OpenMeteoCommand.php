@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\WeatherServiceProvider\OpenMeteoProvider;
+use App\Services\WeatherServiceProvider\WeatherProvider;
 use Illuminate\Console\Command;
 
 class OpenMeteoCommand extends Command
@@ -13,10 +14,8 @@ class OpenMeteoCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(WeatherProvider $weatherProvider)
     {
-        $weatherData = new OpenMeteoProvider();
-
-        dump($weatherData->getCurrentWeather());
+        dump($weatherProvider->getCurrentWeather());
     }
 }
