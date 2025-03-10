@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\WeatherDataService\OpenMeteoJsonParser;
 use App\Services\WeatherDataService\WeatherApiClient;
-use App\Services\WeatherDataService\WeatherData;
 use App\Services\WeatherDataService\WeatherDataService;
 use GuzzleHttp\Client;
 

@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\WeatherDataService;
 
-use App\Services\WeatherDataService\Enums\WeatherCode;
 use App\Services\WeatherDataService\OpenMeteoJsonParser;
-use App\Services\WeatherDataService\WeatherData;
+use App\Services\WeatherServiceProvider\Enums\WeatherCode;
+use App\Services\WeatherServiceProvider\WeatherData;
 use PHPUnit\Framework\TestCase;
 
 class OpenMeteoParserTest extends TestCase

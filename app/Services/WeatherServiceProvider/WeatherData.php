@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services\WeatherDataService;
+namespace App\Services\WeatherServiceProvider;
 
-use App\Services\WeatherDataService\Enums\WeatherCode;
+use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 
 class WeatherData
 {

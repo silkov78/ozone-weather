@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\WeatherDataService;
 
-use App\Services\WeatherDataService\Enums\WeatherCode;
+use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 use PHPUnit\Framework\TestCase;
 
 class WeatherCodeTest extends TestCase

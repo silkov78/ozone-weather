@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\WeatherDataService\Enums;
+namespace App\Services\WeatherServiceProvider\Enums;
 
 enum WeatherCode: int
 {
