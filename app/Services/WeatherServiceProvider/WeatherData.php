@@ -6,7 +6,7 @@ namespace App\Services\WeatherServiceProvider;
 
 use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 
-class WeatherData
+readonly class WeatherData
 {
     public function __construct(
         public \DateTime   $dateTime,
