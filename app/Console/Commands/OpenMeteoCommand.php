@@ -15,14 +15,7 @@ class OpenMeteoCommand extends Command
      */
     public function handle()
     {
-        $url = env('WEATHER_API_URL');
-        $params = [
-            'latitude' => 53.8978,
-            'longitude' => 27.5563,
-            'current' => 'temperature_2m,weather_code,cloud_cover'
-        ];
-
-        $weatherData = new OpenMeteoProvider($url, $params);
+        $weatherData = new OpenMeteoProvider();
 
         dump($weatherData->getCurrentWeather());
     }

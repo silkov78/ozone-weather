@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Http;
 
 readonly class OpenMeteoProvider implements WeatherProvider
 {
-    public function __construct(
-        public string $apiUrl,
-        public array $apiParams
-    ) {}
+    private const OPEN_METEO_URL = 'https://api.open-meteo.com/v1/forecast';
+    private const OPEN_METEO_QUERY_PARAMS = [
+        'latitude' => 53.8978,
+        'longitude' => 27.5563,
+        'current' => 'temperature_2m,weather_code,cloud_cover'
+    ];
 
     public function getCurrentWeather(): WeatherData
     {
@@ -30,8 +32,8 @@ readonly class OpenMeteoProvider implements WeatherProvider
     private function getJsonStringFromApi(): string
     {
         try {
-            $queryString = http_build_query($this->apiParams);
-            $apiEndpoint = $this->apiUrl . '?' . $queryString;
+            $queryString = http_build_query(self::OPEN_METEO_QUERY_PARAMS);
+            $apiEndpoint = self::OPEN_METEO_URL . '?' . $queryString;
 
             $response = HTTP::get($apiEndpoint);
         } catch (\Exception $e) {
