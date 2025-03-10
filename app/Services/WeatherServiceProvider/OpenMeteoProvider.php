@@ -32,10 +32,10 @@ readonly class OpenMeteoProvider implements WeatherProvider
     private function getJsonStringFromApi(): string
     {
         try {
-            $queryString = http_build_query(self::OPEN_METEO_QUERY_PARAMS);
-            $apiEndpoint = self::OPEN_METEO_URL . '?' . $queryString;
-
-            $response = HTTP::get($apiEndpoint);
+            $response = HTTP::get(
+                self::OPEN_METEO_URL,
+                self::OPEN_METEO_QUERY_PARAMS
+            );
         } catch (\Exception $e) {
             throw new ApiRequestException($e->getMessage());
         }
