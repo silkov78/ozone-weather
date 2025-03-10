@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\WeatherServiceProvider\Enums;
 
+/**
+ * WeatherCode перечисляет все возможные состоянии погоды.
+ * Кодировки утверждены WMO (являются общепринятыми).
+ * Если провалидированные данные содержат код, непредставленный в перечислении,
+ * ему присваивается код UNDEFINED.
+ */
 enum WeatherCode: int
 {
+    case UNDEFINED = -1;
     case CLEAR_SKY = 0;
     case MAINLY_CLEAR = 1;
     case PARTLY_CLOUDY = 2;
@@ -31,6 +38,6 @@ enum WeatherCode: int
 
     public static function fromCode(int $code): self
     {
-        return self::tryFrom($code) ?? self::CLEAR_SKY; // Default to CLEAR_SKY if unknown
+        return self::tryFrom($code) ?? self::UNDEFINED;
     }
 }
