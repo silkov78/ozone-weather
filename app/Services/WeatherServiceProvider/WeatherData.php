@@ -12,7 +12,7 @@ readonly class WeatherData
         public \DateTime   $dateTime,
         public float       $temperature,
         public float       $cloudCover,
-        public WeatherCode $weatherState,
+        public WeatherCode $weatherCode,
     ) {
     }
 }
