@@ -11,7 +11,7 @@ use GuzzleHttp\ClientInterface;
 use Illuminate\Validation\Validator;
 use PHPUnit\Framework\TestCase;
 
-class OpenMeteoProviderTest extends TestCase
+class OpenMeteoProviderFeatureTest extends TestCase
 {
     private ClientInterface $httpClient;
     private ValidationFactory $validationFactory;
@@ -34,7 +34,7 @@ class OpenMeteoProviderTest extends TestCase
             'current' => [
                 'time' => '2025-03-11T12:00',
                 'temperature_2m' => 10.5,
-                'cloud_cover' => 0.5,
+                'cloud_cover' => 50,
                 'weather_code' => 3,
             ]
         ]));
@@ -43,7 +43,7 @@ class OpenMeteoProviderTest extends TestCase
         $this->httpClient
             ->expects($this->once())
             ->method('request')
-            ->with('GET', $this->anything())
+            ->with('GET', $this->provider->apiWeatherEndPoint)
             ->willReturn($mockResponse);
 
         // Mock Validator to always pass
@@ -62,8 +62,8 @@ class OpenMeteoProviderTest extends TestCase
         $expected = new WeatherData(
             new \DateTime('2025-03-11T12:00'),
             10.5,
-            0.5,
-            WeatherCode::OVERCAST
+            50,
+            WeatherCode::fromCode(3)
         );
 
         $this->assertEquals($expected, $result);
