@@ -97,4 +97,26 @@ class OpenMeteoProviderTest extends TestCase
         $this->expectException(ApiRequestException::class);
         $this->provider->getCurrentWeather();
     }
+
+    public function test_response_has_invalid_json(): void
+    {
+        $mockResponse = new Response(200, [], json_encode(['some invalid json']));
+
+        $this->httpClient
+             ->expects($this->once())
+             ->method('request')
+             ->willReturn($mockResponse);
+
+        // Mock validator fails
+        $mockValidator = $this->createMock(Validator::class);
+        $this->validationFactory
+             ->expects($this->once())
+             ->method('make')
+             ->willReturn($mockValidator);
+
+        $mockValidator->expects($this->once())->method('fails')->willReturn(true);
+
+        $this->expectException(ApiRequestException::class);
+        $this->provider->getCurrentWeather();
+    }
 }
