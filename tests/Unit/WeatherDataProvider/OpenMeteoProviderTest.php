@@ -3,6 +3,7 @@
 namespace Tests\Unit\WeatherDataProvider;
 
 use App\Services\WeatherServiceProvider\Enums\WeatherCode;
+use App\Services\WeatherServiceProvider\Exceptions\ApiRequestException;
 use App\Services\WeatherServiceProvider\OpenMeteoProvider;
 use App\Services\WeatherServiceProvider\WeatherData;
 use GuzzleHttp\Psr7\Response;
@@ -11,7 +12,7 @@ use GuzzleHttp\ClientInterface;
 use Illuminate\Validation\Validator;
 use PHPUnit\Framework\TestCase;
 
-class OpenMeteoProviderFeatureTest extends TestCase
+class OpenMeteoProviderTest extends TestCase
 {
     private ClientInterface $httpClient;
     private ValidationFactory $validationFactory;
@@ -67,5 +68,33 @@ class OpenMeteoProviderFeatureTest extends TestCase
         );
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function test_http_client_gets_400_error_status(): void
+    {
+        $mockResponse = new Response(400, []);
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('request')
+            ->with('GET', $this->provider->apiWeatherEndPoint)
+            ->willReturn($mockResponse);
+
+        $this->expectException(ApiRequestException::class);
+        $this->provider->getCurrentWeather();
+    }
+
+    public function test_http_client_gets_500_error_status(): void
+    {
+        $mockResponse = new Response(500, []);
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('request')
+            ->with('GET', $this->provider->apiWeatherEndPoint)
+            ->willReturn($mockResponse);
+
+        $this->expectException(ApiRequestException::class);
+        $this->provider->getCurrentWeather();
     }
 }
