@@ -51,9 +51,8 @@ readonly class OpenMeteoProvider implements WeatherProvider
         $validWeatherCodes = array_column(WeatherCode::cases(), 'value');
         $rules = [
             'current.time' => 'required|date_format:Y-m-d\TH:i',
-            'current.interval' => 'required|integer',
-            'current.temperature_2m' => 'required|numeric',
-            'current.cloud_cover' => 'required|numeric:gte:0|lte:1',
+            'current.temperature_2m' => 'required|numeric|min:-70|max:70',
+            'current.cloud_cover' => 'required|numeric|min:0|max:100',
             'current.weather_code' => [
                 'required',
                 'integer',
