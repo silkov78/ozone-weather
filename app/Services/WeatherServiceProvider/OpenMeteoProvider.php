@@ -8,7 +8,7 @@ use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 use App\Services\WeatherServiceProvider\Exceptions\ApiRequestException;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Contracts\Validation\Factory as ValidatorInterface;
+use Illuminate\Contracts\Validation\Factory as ValidationFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
 readonly class OpenMeteoProvider implements WeatherProvider
@@ -17,9 +17,10 @@ readonly class OpenMeteoProvider implements WeatherProvider
     public string $apiWeatherEndPoint;
 
     public function __construct(
-        private ClientInterface $client,
-        private ValidatorInterface $validator,
-        private array $queryParameters = [
+        private ClientInterface            $client,
+        private ValidationFactoryInterface $factoryForValidator,
+        private array                      $queryParameters = [
+            // Координаты Минска
             'latitude' => 53.8978,
             'longitude' => 27.5563,
             'current' => 'temperature_2m,weather_code,cloud_cover',
@@ -62,7 +63,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
 
         $data = json_decode($response->getBody()->getContents(), true);
 
-        $validator = $this->validator->make($data, $rules);
+        $validator = $this->factoryForValidator->make($data, $rules);
         if ($validator->fails()) {
             throw new ApiRequestException(
                 'Невалидные данные: ' . $validator->errors()
