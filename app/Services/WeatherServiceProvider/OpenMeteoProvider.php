@@ -43,7 +43,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
 
     private function validateResponse(ResponseInterface $response): WeatherData
     {
-        if ($response->getStatusCode() !== 200) {
+        if ($response->getStatusCode() >= 400) {
             throw new ApiRequestException(
                 'Данные с API не были получены. Статус ответа: ' . $response->getStatusCode()
             );
