@@ -6,6 +6,8 @@ use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 use App\Services\WeatherServiceProvider\Exceptions\ApiRequestException;
 use App\Services\WeatherServiceProvider\OpenMeteoProvider;
 use App\Services\WeatherServiceProvider\WeatherData;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use GuzzleHttp\ClientInterface;
@@ -68,6 +70,17 @@ class OpenMeteoProviderTest extends TestCase
         );
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function test_http_client_request_exception_handling(): void
+    {
+        $this->httpClient
+            ->expects($this->once())
+            ->method('request')
+            ->willThrowException(new \Exception());
+
+        $this->expectException(ApiRequestException::class);
+        $this->provider->getCurrentWeather();
     }
 
     public function test_http_client_gets_400_error_status(): void
