@@ -14,24 +14,25 @@ use Psr\Http\Message\ResponseInterface;
 readonly class OpenMeteoProvider implements WeatherProvider
 {
     private const OPEN_METEO_URL = 'https://api.open-meteo.com/v1/forecast';
-    private const OPEN_METEO_QUERY_PARAMS = [
-        'latitude' => 53.8978,
-        'longitude' => 27.5563,
-        'current' => 'temperature_2m,weather_code,cloud_cover'
-    ];
+    public string $apiWeatherEndPoint;
 
     public function __construct(
         private ClientInterface $client,
         private ValidatorInterface $validator,
-    ) {}
+        private array $queryParameters = [
+            'latitude' => 53.8978,
+            'longitude' => 27.5563,
+            'current' => 'temperature_2m,weather_code,cloud_cover',
+        ]
+    ) {
+        $queryString = http_build_query($this->queryParameters);
+        $this->apiWeatherEndPoint = self::OPEN_METEO_URL . '?' . $queryString;
+    }
 
     public function getCurrentWeather(): WeatherData
     {
-        $queryParameters = http_build_query(self::OPEN_METEO_QUERY_PARAMS);
-        $apiEndpoint = self::OPEN_METEO_URL . '?' . $queryParameters;
-
         try {
-            $response = $this->client->request('GET', $apiEndpoint);
+            $response = $this->client->request('GET', $this->apiWeatherEndPoint);
         } catch (GuzzleException $e) {
             throw new ApiRequestException($e->getMessage());
         }
