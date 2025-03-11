@@ -52,7 +52,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
             'current.time' => 'required|date_format:Y-m-d\TH:i',
             'current.interval' => 'required|integer',
             'current.temperature_2m' => 'required|numeric',
-            'current.cloud_cover' => 'required|numeric:gte:0',
+            'current.cloud_cover' => 'required|numeric:gte:0|lte:1',
             'current.weather_code' => [
                 'required',
                 'integer',
