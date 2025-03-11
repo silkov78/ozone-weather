@@ -2,14 +2,70 @@
 
 namespace Tests\Unit\WeatherDataProvider;
 
+use App\Services\WeatherServiceProvider\Enums\WeatherCode;
 use App\Services\WeatherServiceProvider\OpenMeteoProvider;
-use App\Services\WeatherServiceProvider\WeatherProvider;
+use App\Services\WeatherServiceProvider\WeatherData;
+use GuzzleHttp\Psr7\Response;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use GuzzleHttp\ClientInterface;
+use Illuminate\Validation\Validator;
 use PHPUnit\Framework\TestCase;
 
 class OpenMeteoProviderTest extends TestCase
 {
+    private ClientInterface $httpClient;
+    private ValidationFactory $validationFactory;
+    private OpenMeteoProvider $provider;
+
     public function setUp(): void
     {
-        $openMeteoMock = $this->createMock(WeatherProvider::class);
+        $this->httpClient = $this->createMock(ClientInterface::class);
+        $this->validationFactory = $this->createMock(ValidationFactory::class);
+
+        $this->provider = new OpenMeteoProvider(
+            $this->httpClient, $this->validationFactory
+        );
+    }
+
+    public function test_get_current_weather_success(): void
+    {
+        // Simulated API Response
+        $mockResponse = new Response(200, [], json_encode([
+            'current' => [
+                'time' => '2025-03-11T12:00',
+                'temperature_2m' => 10.5,
+                'cloud_cover' => 0.5,
+                'weather_code' => 3,
+            ]
+        ]));
+
+        // Mock HTTP Client to return the simulated response
+        $this->httpClient
+            ->expects($this->once())
+            ->method('request')
+            ->with('GET', $this->anything())
+            ->willReturn($mockResponse);
+
+        // Mock Validator to always pass
+        $mockValidator = $this->createMock(Validator::class);
+        $this->validationFactory
+            ->expects($this->once())
+            ->method('make')
+            ->willReturn($mockValidator);
+        $mockValidator
+            ->expects($this->once())
+            ->method('fails')
+            ->willReturn(false);
+
+        // Execute the method
+        $result = $this->provider->getCurrentWeather();
+        $expected = new WeatherData(
+            new \DateTime('2025-03-11T12:00'),
+            10.5,
+            0.5,
+            WeatherCode::OVERCAST
+        );
+
+        $this->assertEquals($expected, $result);
     }
 }
