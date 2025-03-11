@@ -34,7 +34,7 @@ readonly class OpenMeteoProvider implements WeatherProvider
     {
         try {
             $response = $this->client->request('GET', $this->apiWeatherEndPoint);
-        } catch (GuzzleException $e) {
+        } catch (\Exception $e) {
             throw new ApiRequestException($e->getMessage());
         }
 
