@@ -12,8 +12,13 @@ class GetWeather extends Command
     protected $signature = 'app:get-weather';
     protected $description = 'Get weather data from weather API';
 
-    public function handle(WeatherProvider $weatherProvider)
+    public function __construct(private WeatherProvider $weatherProvider)
     {
-        dump($weatherProvider->getCurrentWeather());
+        parent::__construct();
+    }
+
+    public function handle(): void
+    {
+        dump($this->weatherProvider->getCurrentWeather());
     }
 }
