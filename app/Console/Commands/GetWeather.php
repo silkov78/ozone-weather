@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Console\Commands;
+
+use App\Services\WeatherServiceProvider\WeatherProvider;
+use Illuminate\Console\Command;
+
+class GetWeather extends Command
+{
+    protected $signature = 'app:get-weather';
+    protected $description = 'Get weather data from weather API';
+
+    public function __construct(private WeatherProvider $weatherProvider)
+    {
+        parent::__construct();
+    }
+
+    public function handle(): void
+    {
+        dump($this->weatherProvider->getCurrentWeather());
+    }
+}
