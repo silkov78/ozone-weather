@@ -57,10 +57,9 @@ RUN apt-get update && apt-get upgrade -y \
 
 # Cron config
 RUN apt-get update && apt-get install -y cron
-COPY cronjob /etc/cron.d/laravel-scheduler
+COPY laravel-scheduler /etc/cron.d/laravel-scheduler
 RUN chmod 0644 /etc/cron.d/laravel-scheduler
 RUN crontab /etc/cron.d/laravel-scheduler
-RUN service cron restart
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 
