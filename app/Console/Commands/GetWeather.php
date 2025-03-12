@@ -20,7 +20,9 @@ class GetWeather extends Command
 
     public function handle(): void
     {
-        Log::info('Опааа');
-        dump($this->weatherProvider->getCurrentWeather());
+        $weatherData = $this->weatherProvider->getCurrentWeather();
+
+        Log::info($weatherData);
+        dump($weatherData);
     }
 }

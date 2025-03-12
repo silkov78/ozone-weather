@@ -15,4 +15,9 @@ readonly class WeatherData
         public WeatherCode $weatherCode,
     ) {
     }
+
+    public function __toString(): string
+    {
+        return "Weather report: city - Minsk, Temperature - {$this->temperature}°C";
+    }
 }
