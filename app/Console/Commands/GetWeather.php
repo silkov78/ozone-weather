@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Services\WeatherServiceProvider\WeatherProvider;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class GetWeather extends Command
 {
@@ -19,6 +20,7 @@ class GetWeather extends Command
 
     public function handle(): void
     {
+        Log::info('Опааа');
         dump($this->weatherProvider->getCurrentWeather());
     }
 }
