@@ -11,4 +11,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Schedulers
-//Schedule::command('app:get-weather')->everyTenSeconds();
+Schedule::command('app:get-weather')->everyMinute();
